@@ -43,6 +43,6 @@ public class Location {
 
     public String toString() {
         return idEstado + "," + siglaEstado + "," + regiaoNome + "," + nomeCidade + "," + nomeMesorregiao + "," +
-                nomeFormatado;
+                nomeFormatado + "\n";
     }
 }

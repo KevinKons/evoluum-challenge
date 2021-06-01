@@ -4,15 +4,13 @@ import com.kevinkons.location.entity.Location;
 import com.kevinkons.location.exception.FormatNotSupportedException;
 import com.kevinkons.location.exception.LocationNotFoundException;
 
-import com.kevinkons.location.getlocationsstrategy.TransformLocationsStrategyFactory;
+import com.kevinkons.location.getlocationsstrategy.GenerateLocationsFileStrategyFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
@@ -31,7 +29,7 @@ public class LocationServiceTest {
     RestTemplate restTemplate;
 
     @Mock
-    TransformLocationsStrategyFactory transformLocationsStrategyFactory;
+    GenerateLocationsFileStrategyFactory generateLocationsFileStrategyFactory;
 
     private static Location[] locations;
     private static Location location1;
@@ -90,7 +88,7 @@ public class LocationServiceTest {
     public void findAllLocations() {
         when(restTemplate.getForObject(LocationService.citiesPath, Location[].class)).thenReturn(locations);
 
-        Location[] result = locationService.getAllLocations();
+        Location[] result = locationService.generateAllLocationsFile();
 
         assertEquals(result[0].getNomeCidade(), location1.getNomeCidade());
         assertEquals(result[1].getNomeCidade(), location2.getNomeCidade());
@@ -100,10 +98,10 @@ public class LocationServiceTest {
 
     @Test
     public void getAllLocationsWhenFormatIsNotSupported() {
-        when(transformLocationsStrategyFactory.getStrategy("pdf")).thenReturn(Optional.empty());
+        when(generateLocationsFileStrategyFactory.getStrategy("pdf")).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(FormatNotSupportedException.class, () ->
-            locationService.getAllLocations("pdf")
+            locationService.generateAllLocationsFile("pdf")
         );
 
         String expectedMessage = "pdf format is not supported";
@@ -114,10 +112,10 @@ public class LocationServiceTest {
 
     @Test
     public void getAllLocationsWhenFormatIsSupported() {
-        when(transformLocationsStrategyFactory.getStrategy("csv"))
-                .thenReturn(Optional.of(new MockTransformLocationStrategy()));
+        when(generateLocationsFileStrategyFactory.getStrategy("csv"))
+                .thenReturn(Optional.of(new MockGenerateLocationFileStrategy()));
 
-        String result = locationService.getAllLocations("csv");
+        String result = locationService.generateAllLocationsFile("csv");
         System.out.println(String.format("Getting all city id with state name %s, and city name %s.", "sc", "biguas"));
         assertEquals("mocked strategy", result);
     }

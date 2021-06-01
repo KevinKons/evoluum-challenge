@@ -33,7 +33,7 @@ public class LocationController {
     @GetMapping("/")
     public Location[] getLocations() {
         logger.info("Inside of getLocations method of LocationController");
-        return locationService.getAllLocations();
+        return locationService.generateAllLocationsFile();
     }
 
     @GetMapping("/{format}")
@@ -42,7 +42,7 @@ public class LocationController {
         logger.info(String.format(
                 "Inside of getLocations method of LocationController with format as %s.", format));
 
-        String fileName = locationService.getAllLocations(format);
+        String fileName = locationService.generateAllLocationsFile(format);
         Resource resource = fileStorageService.loadFileAsResource(fileName);
 
         String contentType = null;
