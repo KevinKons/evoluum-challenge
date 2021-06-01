@@ -1,14 +1,13 @@
 server:
-  port: 9001
-  error:
-    include-message: always
-    include-binding-errors: always
-    include-stacktrace: on_trace_param
-    include-exception: false
+  port: 9295
 
 spring:
   application:
-    name: LOCATION-SERVICE
+    name: HYSTRIX-DASHBOARD
+
+hystrix:
+  dashboard:
+    proxy-stream-allow-list: "*"
 
 eureka:
   client:

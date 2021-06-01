@@ -1,0 +1,41 @@
+server:
+  port: 9191
+
+spring:
+  application:
+    name: API-GATEWAY
+  cloud:
+    gateway:
+      routes:
+        - id: LOCATION-SERVICE
+          uri: lb://LOCATION-SERVICE
+          predicates:
+            - Path=/locations/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: fallbackcmd
+                fallbackuri: forward:/locationServiceFallBack
+
+hystrix:
+  command:
+    fallbackcmd:
+      execution:
+        isolation:
+          thread:
+            timeoutInMilliseconds: 15000
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: hystrix.stream
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
